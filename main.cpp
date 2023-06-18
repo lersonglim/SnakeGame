@@ -172,6 +172,36 @@ public:
         }
     }
 
+    Node getNextPosition()
+    {
+        int next_x = head->x;
+        int next_y = head->y;
+
+        switch (direction)
+        {
+        case Up:
+            // Handle up arrow key press
+            next_y -= SNAKE_SIZE;
+            break;
+        case Down:
+            // Handle down arrow key press
+            next_y += SNAKE_SIZE;
+            break;
+        case Left:
+            // Handle left arrow key press
+            next_x -= SNAKE_SIZE;
+            break;
+        case Right:
+            // Handle right arrow key press
+            next_x += SNAKE_SIZE;
+            break;
+        default:
+            break;
+        }
+
+        return Node(next_x, next_y);
+    }
+
     void move()
     {
 
@@ -328,7 +358,44 @@ SDL_Texture *CreateTextTexture(SDL_Renderer *renderer, SDL_Surface *textSurface)
     return textTexture;
 }
 
-bool DetectCollision(Snake &snake, Food &food)
+bool DetectWallCollision(Snake &snake, Food &food)
+{
+    int next_x = snake.head->x;
+    int next_y = snake.head->y;
+
+    switch (snake.direction)
+    {
+    case Up:
+        // Handle up arrow key press
+        next_y -= SNAKE_SIZE;
+        break;
+    case Down:
+        // Handle down arrow key press
+        next_y += SNAKE_SIZE;
+        break;
+    case Left:
+        // Handle left arrow key press
+        next_x -= SNAKE_SIZE;
+        break;
+    case Right:
+        // Handle right arrow key press
+        next_x += SNAKE_SIZE;
+        break;
+    default:
+        break;
+    }
+
+    if (next_x < MIN_X || next_x > MAX_X || next_y < MIN_Y || next_y > MAX_Y)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool DetectFoodCollision(Snake &snake, Food &food)
 {
     int next_x = snake.head->x;
     int next_y = snake.head->y;
@@ -452,8 +519,13 @@ int main(int argc, char *argv[])
             SDL_RenderPresent(renderer);
             break;
         case Play:
+            // Detect snake and wall Collision
+            if (DetectWallCollision(snake))
+            {
+            }
+
             // Detect snake and food collision
-            if (DetectCollision(snake, food))
+            if (DetectFoodCollision(snake, food))
             {
                 snake.eat(food);
             }
