@@ -230,27 +230,9 @@ public:
             newY = oldY;
         }
 
-        switch (direction)
-        {
-        case Up:
-            // Handle up arrow key press
-            head->y -= SNAKE_SIZE;
-            break;
-        case Down:
-            // Handle down arrow key press
-            head->y += SNAKE_SIZE;
-            break;
-        case Left:
-            // Handle left arrow key press
-            head->x -= SNAKE_SIZE;
-            break;
-        case Right:
-            // Handle right arrow key press
-            head->x += SNAKE_SIZE;
-            break;
-        default:
-            break;
-        }
+        Node posNode = getNextPosition();
+        head->y = posNode.y;
+        head->x = posNode.x;
     }
 };
 
@@ -358,34 +340,11 @@ SDL_Texture *CreateTextTexture(SDL_Renderer *renderer, SDL_Surface *textSurface)
     return textTexture;
 }
 
-bool DetectWallCollision(Snake &snake, Food &food)
+bool DetectWallCollision(Snake &snake)
 {
-    int next_x = snake.head->x;
-    int next_y = snake.head->y;
+    Node posNode = snake.getNextPosition();
 
-    switch (snake.direction)
-    {
-    case Up:
-        // Handle up arrow key press
-        next_y -= SNAKE_SIZE;
-        break;
-    case Down:
-        // Handle down arrow key press
-        next_y += SNAKE_SIZE;
-        break;
-    case Left:
-        // Handle left arrow key press
-        next_x -= SNAKE_SIZE;
-        break;
-    case Right:
-        // Handle right arrow key press
-        next_x += SNAKE_SIZE;
-        break;
-    default:
-        break;
-    }
-
-    if (next_x < MIN_X || next_x > MAX_X || next_y < MIN_Y || next_y > MAX_Y)
+    if (posNode.x < MIN_X || posNode.x >= MAX_X || posNode.y < MIN_Y || posNode.y >= MAX_Y)
     {
         return true;
     }
@@ -397,32 +356,8 @@ bool DetectWallCollision(Snake &snake, Food &food)
 
 bool DetectFoodCollision(Snake &snake, Food &food)
 {
-    int next_x = snake.head->x;
-    int next_y = snake.head->y;
-
-    switch (snake.direction)
-    {
-    case Up:
-        // Handle up arrow key press
-        next_y -= SNAKE_SIZE;
-        break;
-    case Down:
-        // Handle down arrow key press
-        next_y += SNAKE_SIZE;
-        break;
-    case Left:
-        // Handle left arrow key press
-        next_x -= SNAKE_SIZE;
-        break;
-    case Right:
-        // Handle right arrow key press
-        next_x += SNAKE_SIZE;
-        break;
-    default:
-        break;
-    }
-
-    if (next_x == food.x && next_y == food.y)
+    Node posNode = snake.getNextPosition();
+    if (posNode.x == food.x && posNode.y == food.y)
     {
         return true;
     }
@@ -446,12 +381,18 @@ int main(int argc, char *argv[])
     // Create a renderer
     SDL_Renderer *renderer = CreateRenderer(window);
 
+    // Main Menu
     // Load the font
     TTF_Font *font = LoadFont();
     // Create a surface from the font
     SDL_Surface *textSurface = CreateTextSurface(font, "PRESS ENTER TO PLAY THE GAME");
     // Create a texture from the surface
     SDL_Texture *textTexture = CreateTextTexture(renderer, textSurface);
+
+    // Create a surface from the font
+    SDL_Surface *gameOverTS = CreateTextSurface(font, "GAME OVER");
+    // Create a texture from the surface
+    SDL_Texture *gameOverTT = CreateTextTexture(renderer, gameOverTS);
 
     // Get the dimensions of the text surface
     int textWidth = textSurface->w;
@@ -507,25 +448,26 @@ int main(int argc, char *argv[])
             }
         }
 
-        // Clear the renderer
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-
         switch (gamestate)
         {
         case MainMenu:
+            // Clear the renderer
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderClear(renderer);
             // Render the text texture onto the screen
             SDL_RenderCopy(renderer, textTexture, nullptr, &dstRect);
             SDL_RenderPresent(renderer);
             break;
         case Play:
-            // Detect snake and wall Collision
+            // Clear the renderer
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderClear(renderer);
+
             if (DetectWallCollision(snake))
             {
+                gamestate = GameState::GameOver;
             }
-
-            // Detect snake and food collision
-            if (DetectFoodCollision(snake, food))
+            else if (DetectFoodCollision(snake, food))
             {
                 snake.eat(food);
             }
@@ -541,6 +483,15 @@ int main(int argc, char *argv[])
             // Delay for a short time
             SDL_RenderPresent(renderer);
             SDL_Delay(DELAY_TIME);
+            break;
+        case GameOver:
+            // Clear the renderer
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDL_RenderClear(renderer);
+            DrawSnake(renderer, snake);
+            DrawFood(renderer, food);
+            SDL_RenderCopy(renderer, gameOverTT, nullptr, &dstRect);
+            SDL_RenderPresent(renderer);
             break;
         default:
             break;
