@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(Program)
+project(SnakeGame)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -19,10 +19,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Build executable
-add_executable(program ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 # Link libraries
-target_link_libraries(program
+target_link_libraries(${PROJECT_NAME}
     ${CMAKE_DL_LIBS}
     ${CMAKE_THREAD_LIBS_INIT}
     "-L/opt/homebrew/lib"

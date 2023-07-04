@@ -6,6 +6,5 @@
 - Add AI
 - Add two player mode
 - Add Timer
-- Refactor
 - Add playstation controller support
 - Rename to underscore notation
