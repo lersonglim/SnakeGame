@@ -3,7 +3,6 @@
 #include "food.h"
 #include "snake.h"
 
-
 Node::Node(int newX, int newY)
 {
     x = newX;
