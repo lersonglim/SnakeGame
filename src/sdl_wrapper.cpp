@@ -2,7 +2,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 
-const std::string FONT_PATH = "./debrosee.ttf";
+const std::string FONT_PATH = "assets/debrosee.ttf";
 
 SDL_Window *CreateWindow(int window_width, int window_height)
 {
