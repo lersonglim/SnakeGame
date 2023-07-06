@@ -2,7 +2,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 
-const std::string FONT_PATH = "assets/debrosee.ttf";
+
 
 SDL_Window *CreateWindow(int window_width, int window_height)
 {
@@ -27,17 +27,6 @@ SDL_Renderer *CreateRenderer(SDL_Window *window)
         exit(0);
     }
     return renderer;
-}
-
-TTF_Font *LoadFont()
-{
-    TTF_Font *font = TTF_OpenFont(FONT_PATH.c_str(), 36);
-    if (!font)
-    {
-        SDL_Log("Failed to load font: %s", TTF_GetError());
-        exit(0);
-    }
-    return font;
 }
 
 SDL_Surface *CreateTextSurface(TTF_Font *font, const char *text)

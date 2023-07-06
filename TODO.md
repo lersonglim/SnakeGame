@@ -8,3 +8,5 @@
 - Add Timer
 - Add playstation controller support
 - Rename to underscore notation
+- Make a config based on yml
+- Install lint for C++

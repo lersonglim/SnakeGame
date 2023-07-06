@@ -100,7 +100,7 @@ void Snake::setDirection(SDL_Keycode keySymbol)
     }
 }
 
-Node Snake::getNextPosition()
+auto Snake::getNextPosition() -> Node
 {
     int next_x = head->x;
     int next_y = head->y;
@@ -127,7 +127,7 @@ Node Snake::getNextPosition()
         break;
     }
 
-    return Node(next_x, next_y);
+    return {next_x, next_y};
 }
 
 void Snake::move()

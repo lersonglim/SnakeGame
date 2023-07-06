@@ -1,14 +1,10 @@
-#include <SDL2/SDL.h>
-#include <iostream>
-#include <SDL2/SDL_ttf.h>
-#include <memory>
-#include <stdlib.h>
 #include "utils.h"
 #include "sdl_wrapper.h"
 #include "food.h"
 #include "snake.h"
 #include "draw.h"
 #include "collision.h"
+#include "text.h"
 
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
@@ -46,60 +42,32 @@ int main(int argc, char *argv[])
 
     // Main Menu
     // Load the font
-    TTF_Font *font = LoadFont();
-    // Create a surface from the font
-    SDL_Surface *textSurface = CreateTextSurface(font, "PRESS ENTER TO PLAY THE GAME");
-    // Create a texture from the surface
-    SDL_Texture *textTexture = CreateTextTexture(renderer, textSurface);
+    Text game_over_text("GAME OVER", renderer, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 3 * SNAKE_SIZE);
+    Text restart_text("Press Y to restart", renderer, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 
-    // Create a surface from the font
-    SDL_Surface *gameOverTS = CreateTextSurface(font, "GAME OVER");
-    // Create a texture from the surface
-    SDL_Texture *gameOverTT = CreateTextTexture(renderer, gameOverTS);
-
-    // Create a press y to restart text
-    SDL_Surface *restartTS = CreateTextSurface(font, "Press Y to restart");
-    // Create a texture from the surface
-    SDL_Texture *restartTT = CreateTextTexture(renderer, restartTS);
-
-    // Create a surface from the font
-    SDL_Surface *replayTS = CreateTextSurface(font, "PRESS ENTER TO RESTART");
-    // Create a texture from the surface
-    SDL_Texture *replayTT = CreateTextTexture(renderer, gameOverTS);
-
-    // Get the dimensions of the text surface
-    int textWidth = textSurface->w;
-    int textHeight = textSurface->h;
-
-    // Clean up the surface as it is no longer needed
-    SDL_FreeSurface(textSurface);
-
-    // Set up the destination rectangle for rendering the text
-    SDL_Rect dstRect;
-    dstRect.x = (WINDOW_WIDTH - textWidth) / 2;   // Center the text horizontally
-    dstRect.y = (WINDOW_HEIGHT - textHeight) / 2; // Center the text vertically
-    dstRect.w = textWidth;
-    dstRect.h = textHeight;
-
-    // Set up the destination rectangle for rendering the text
-    SDL_Rect replayRect;
-    replayRect.x = (WINDOW_WIDTH - textWidth) / 2;                    // Center the text horizontally
-    replayRect.y = (WINDOW_HEIGHT - textHeight) / 2 - 3 * SNAKE_SIZE; // Center the text vertically
-    replayRect.w = textWidth;
-    replayRect.h = textHeight;
-
-    // Snake and Food
-    Snake snake(INIT_X, INIT_Y, SNAKE_SIZE);
-    Food food(MIN_X, MIN_Y, WINDOW_WIDTH / SNAKE_SIZE - 1, WINDOW_HEIGHT / SNAKE_SIZE - 1, SNAKE_SIZE);
+    std::unique_ptr<Text> main_menu_text;
+    std::unique_ptr<Snake> snake;
+    std::unique_ptr<Food> food;
 
     // Main loop
     bool quit = false;
+    bool initialise = true;
     GameState gamestate = MainMenu;
     SDL_Event event;
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 
     while (!quit)
     {
+        // Initialise and Reinitialise
+        if (initialise)
+        {
+
+            snake.reset(new Snake(INIT_X, INIT_Y, SNAKE_SIZE));
+            food.reset(new Food(MIN_X, MIN_Y, WINDOW_WIDTH / SNAKE_SIZE - 1, WINDOW_HEIGHT / SNAKE_SIZE - 1, SNAKE_SIZE));
+            main_menu_text.reset(new Text("PRESS ENTER TO PLAY THE GAME", renderer, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2));
+            initialise = false;
+        }
+
         // Handle events
 
         while (SDL_PollEvent(&event))
@@ -114,12 +82,20 @@ int main(int argc, char *argv[])
                     if (event.key.keysym.sym == SDLK_RETURN)
                     {
                         gamestate = Play;
-                        SDL_DestroyTexture(textTexture);
+
+                        main_menu_text->destroy();
                     }
                     break;
                 case Play:
-                    snake.setDirection(event.key.keysym.sym);
+                    snake->setDirection(event.key.keysym.sym);
                     breakEventLoop = true;
+                    break;
+                case GameOver:
+                    if (event.key.keysym.sym == SDLK_y)
+                    {
+                        gamestate = MainMenu;
+                        initialise = true;
+                    }
                     break;
                 default:
                     break;
@@ -142,7 +118,7 @@ int main(int argc, char *argv[])
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderClear(renderer);
             // Render the text texture onto the screen
-            SDL_RenderCopy(renderer, textTexture, nullptr, &dstRect);
+            main_menu_text->render();
             SDL_RenderPresent(renderer);
             break;
         case Play:
@@ -150,22 +126,22 @@ int main(int argc, char *argv[])
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderClear(renderer);
 
-            if (DetectWallCollision(snake, MIN_X, MAX_X, MIN_Y, MAX_Y) || DetectSnakeCollision(snake))
+            if (DetectWallCollision(*snake, MIN_X, MAX_X, MIN_Y, MAX_Y) || DetectSnakeCollision(*snake))
             {
                 gamestate = GameState::GameOver;
             }
-            else if (DetectFoodCollision(snake, food))
+            else if (DetectFoodCollision(*snake, *food))
             {
-                snake.eat(food);
+                snake->eat(*food);
             }
             else
             {
                 // Update snake position
-                snake.move();
+                snake->move();
             }
             // Draw
-            DrawSnake(renderer, snake);
-            DrawFood(renderer, food);
+            DrawSnake(renderer, *snake);
+            DrawFood(renderer, *food);
 
             // Delay for a short time
             SDL_RenderPresent(renderer);
@@ -175,20 +151,17 @@ int main(int argc, char *argv[])
             // Clear the renderer
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderClear(renderer);
-            DrawSnake(renderer, snake);
-            DrawFood(renderer, food);
-            SDL_RenderCopy(renderer, restartTT, nullptr, &dstRect);
-            SDL_RenderCopy(renderer, gameOverTT, nullptr, &replayRect);
+            DrawSnake(renderer, *snake);
+            DrawFood(renderer, *food);
+            restart_text.render();
+            game_over_text.render();
             SDL_RenderPresent(renderer);
             break;
         default:
             break;
         }
     }
-
     // Cleanup and quit SDL
-    SDL_DestroyTexture(textTexture);
-    TTF_CloseFont(font);
     TTF_Quit();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

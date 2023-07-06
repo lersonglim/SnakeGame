@@ -1,5 +1,5 @@
 #include "utils.h"
-#include <stdlib.h>
+#include <cstdlib>
 
 int PixeltoFloat(int pixel, int snake_size)
 {
