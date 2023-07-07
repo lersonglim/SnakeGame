@@ -46,12 +46,14 @@ int main(int argc, char *argv[])
     Text restart_text("Press Y to restart", renderer, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 
     std::unique_ptr<Text> main_menu_text;
+    std::unique_ptr<Text> score_text;
     std::unique_ptr<Snake> snake;
     std::unique_ptr<Food> food;
 
     // Main loop
     bool quit = false;
     bool initialise = true;
+    int score = 0;
     GameState gamestate = MainMenu;
     SDL_Event event;
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
@@ -61,10 +63,13 @@ int main(int argc, char *argv[])
         // Initialise and Reinitialise
         if (initialise)
         {
-
+            score = 0;
             snake.reset(new Snake(INIT_X, INIT_Y, SNAKE_SIZE));
             food.reset(new Food(MIN_X, MIN_Y, WINDOW_WIDTH / SNAKE_SIZE - 1, WINDOW_HEIGHT / SNAKE_SIZE - 1, SNAKE_SIZE));
             main_menu_text.reset(new Text("PRESS ENTER TO PLAY THE GAME", renderer, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2));
+
+            std::string scoreString = "Score: " + std::to_string(score);
+            score_text.reset(new Text(scoreString.c_str(), renderer, WINDOW_WIDTH / 2, 20));
             initialise = false;
         }
 
@@ -95,6 +100,7 @@ int main(int argc, char *argv[])
                     {
                         gamestate = MainMenu;
                         initialise = true;
+                        score_text->destroy();
                     }
                     break;
                 default:
@@ -133,6 +139,9 @@ int main(int argc, char *argv[])
             else if (DetectFoodCollision(*snake, *food))
             {
                 snake->eat(*food);
+                score += 1;
+                std::string scoreString = "Score: " + std::to_string(score);
+                score_text.reset(new Text(scoreString.c_str(), renderer, WINDOW_WIDTH / 2, 20));
             }
             else
             {
@@ -140,6 +149,8 @@ int main(int argc, char *argv[])
                 snake->move();
             }
             // Draw
+
+            score_text->render();
             DrawSnake(renderer, *snake);
             DrawFood(renderer, *food);
 

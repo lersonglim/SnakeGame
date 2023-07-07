@@ -2,7 +2,7 @@
 #include <iostream>
 #include <SDL2/SDL_ttf.h>
 #include "sdl_wrapper.h"
-const std::string FONT_PATH = "assets/debrosee.ttf";
+const std::string FONT_PATH = "assets/VT323-Regular.ttf";
 TTF_Font *LoadFont();
 
 class Text

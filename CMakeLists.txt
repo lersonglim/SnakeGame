@@ -53,4 +53,4 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 # Copy font file to build directory
-configure_file(${ROOT_DIR}/assets/debrosee.ttf ${ROOT_DIR}/build/assets/debrosee.ttf COPYONLY)
+configure_file(${ROOT_DIR}/assets/VT323-Regular.ttf ${ROOT_DIR}/build/assets/VT323-Regular.ttf COPYONLY)

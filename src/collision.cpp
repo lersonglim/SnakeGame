@@ -1,4 +1,5 @@
 #include "snake.h"
+#include <yaml-cpp/yaml.h>
 
 bool DetectWallCollision(Snake &snake, int min_x, int max_x, int min_y, int max_y)
 {
