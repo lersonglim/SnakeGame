@@ -6,18 +6,16 @@
 #include "collision.h"
 #include "text.h"
 
-const int WINDOW_WIDTH = 800;
-const int WINDOW_HEIGHT = 600;
-const int SNAKE_SIZE = 20;
-const float SNAKE_SPEED = 15;
+const int WINDOW_WIDTH = 600;
+const int WINDOW_HEIGHT = 500;
+const int PIXEL_SIZE = 20;
+const float SNAKE_SPEED = 12;
 const int MIN_X = 0;
 const int MIN_Y = 0;
-const int MAX_X = WINDOW_WIDTH;
-const int MAX_Y = WINDOW_HEIGHT;
+const int MAX_X = WINDOW_WIDTH / PIXEL_SIZE - 1; // without -1 this will be the edge of the window
+const int MAX_Y = WINDOW_HEIGHT / PIXEL_SIZE - 1;
 const float DELAY_TIME = 1000 / SNAKE_SPEED;
 // Font file path
-const int INIT_X = WINDOW_WIDTH / 2;
-const int INIT_Y = WINDOW_HEIGHT / 2;
 
 enum GameState
 {
@@ -42,7 +40,7 @@ int main(int argc, char *argv[])
 
     // Main Menu
     // Load the font
-    Text game_over_text("GAME OVER", renderer, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 3 * SNAKE_SIZE);
+    Text game_over_text("GAME OVER", renderer, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2 - 3 * PIXEL_SIZE);
     Text restart_text("Press Y to restart", renderer, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 
     std::unique_ptr<Text> main_menu_text;
@@ -64,8 +62,8 @@ int main(int argc, char *argv[])
         if (initialise)
         {
             score = 0;
-            snake.reset(new Snake(INIT_X, INIT_Y, SNAKE_SIZE));
-            food.reset(new Food(MIN_X, MIN_Y, WINDOW_WIDTH / SNAKE_SIZE - 1, WINDOW_HEIGHT / SNAKE_SIZE - 1, SNAKE_SIZE));
+            snake.reset(new Snake(MAX_X / 2, MAX_Y / 2, PIXEL_SIZE));
+            food.reset(new Food(MIN_X, MIN_Y, MAX_X, MAX_Y, PIXEL_SIZE));
             main_menu_text.reset(new Text("PRESS ENTER TO PLAY THE GAME", renderer, WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2));
 
             std::string scoreString = "Score: " + std::to_string(score);
@@ -132,7 +130,8 @@ int main(int argc, char *argv[])
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderClear(renderer);
 
-            if (DetectWallCollision(*snake, MIN_X, MAX_X, MIN_Y, MAX_Y) || DetectSnakeCollision(*snake))
+            // MAX_X +1 and MAX_Y + 1 because that's the edge. MAX_X is the last pixel
+            if (DetectWallCollision(*snake, MIN_X, MAX_X + 1, MIN_Y, MAX_Y + 1) || DetectSnakeCollision(*snake))
             {
                 gamestate = GameState::GameOver;
             }

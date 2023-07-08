@@ -5,8 +5,8 @@
 
 void Food::regenerate()
 {
-    x = PixeltoFloat(GenerateRandomNumber(m_minX, m_maxX), m_snake_size);
-    y = PixeltoFloat(GenerateRandomNumber(m_minY, m_maxY), m_snake_size);
+    x = GenerateRandomNumber(m_minX, m_maxX);
+    y = GenerateRandomNumber(m_minY, m_maxY);
     std::cout << "Food position: x " << x << " y " << y << std::endl;
 }
 

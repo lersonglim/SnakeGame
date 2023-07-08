@@ -39,6 +39,8 @@ public:
 
     void setDirection(SDL_Keycode keySymbol);
 
+    
+
     Node getNextPosition();
 
     void move();

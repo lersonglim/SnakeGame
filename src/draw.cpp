@@ -4,15 +4,10 @@
 void DrawSnake(SDL_Renderer *renderer, Snake &snake)
 {
     // Draw the snake
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     Node *ptr = snake.head;
-    int count = 0;
     while (ptr != nullptr)
     {
-        // std::cout << "Node " << count << ": x is " << ptr->x << ", y is: " << ptr->y << std::endl;
-        count += 1;
-        SDL_Rect snakeRect = {ptr->x, ptr->y, snake.m_snakeSize, snake.m_snakeSize};
-        SDL_RenderFillRect(renderer, &snakeRect);
+        DrawPixel(renderer, ptr->x, ptr->y, snake.m_snakeSize, Color::GREEN);
         ptr = ptr->next;
     }
 }
@@ -21,7 +16,21 @@ void DrawSnake(SDL_Renderer *renderer, Snake &snake)
 void DrawFood(SDL_Renderer *renderer, Food &food)
 {
     // Draw the snake
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-    SDL_Rect foodRect = {food.x, food.y, food.m_snake_size, food.m_snake_size};
-    SDL_RenderFillRect(renderer, &foodRect);
+    DrawPixel(renderer, food.x, food.y, food.m_snake_size, Color::RED);
+}
+
+void DrawPixel(SDL_Renderer *renderer, int x, int y, int pixel_size, Color color)
+{
+    switch (color)
+    {
+    case RED:
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+        break;
+    case GREEN:
+        SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+        break;
+    }
+    SDL_Rect rect = {x * pixel_size, y * pixel_size, pixel_size, pixel_size};
+    // SDL_Rect rect = {x, y, pixel_size, pixel_size};
+    SDL_RenderFillRect(renderer, &rect);
 }

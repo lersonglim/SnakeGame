@@ -1,3 +1,4 @@
+set(CMAKE_TOOLCHAIN_FILE /Users/songlim/vcpkg/scripts/buildsystems/vcpkg.cmake CACHE STRING "Vcpkg toolchain file")
 cmake_minimum_required(VERSION 3.12)
 project(SnakeGame)
 
@@ -8,6 +9,7 @@ file(GLOB SOURCES src/*.cpp)
 # set(CMAKE_CXX_CLANG_TIDY "clang-tidy;-checks=cppcoreguidelines-*")
 
 set(CMAKE_CXX_STANDARD 14)
+
 
 # Set root directory explicitly
 set(ROOT_DIR ${CMAKE_SOURCE_DIR})
@@ -39,6 +41,7 @@ add_custom_target(run
 #     "-extra-arg-before=-I${CLANG_TIDY_INCLUDE_PATHS}"
 #     COMMENT "Running clang-tidy"
 # )
+# Find TensorFlow package
 
 # Build executable
 add_executable(${PROJECT_NAME} ${SOURCES})

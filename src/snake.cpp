@@ -15,7 +15,7 @@ Snake::Snake(int initial_x, int initial_y, int snake_size)
 {
     m_snakeSize = snake_size;
     head = new Node(initial_x, initial_y);
-    Node *node = new Node(initial_x - m_snakeSize, initial_y);
+    Node *node = new Node(initial_x - 1, initial_y);
     head->next = node;
 }
 
@@ -109,19 +109,19 @@ auto Snake::getNextPosition() -> Node
     {
     case Up:
         // Handle up arrow key press
-        next_y -= m_snakeSize;
+        next_y -= 1;
         break;
     case Down:
         // Handle down arrow key press
-        next_y += m_snakeSize;
+        next_y += 1;
         break;
     case Left:
         // Handle left arrow key press
-        next_x -= m_snakeSize;
+        next_x -= 1;
         break;
     case Right:
         // Handle right arrow key press
-        next_x += m_snakeSize;
+        next_x += 1;
         break;
     default:
         break;
