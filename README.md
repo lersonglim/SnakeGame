@@ -1,15 +1,24 @@
-# C++ Program Compilation Guide
+# SnakeGame
+
+## What is it about?
+
+It is a vanilla c++ snake game program. Please see below GIF for example:
+
+![Alt Text](https://github.com/lersonglim/SnakeGame/blob/main/assets/SnakeGame.gif)
+
+## Guide to compile and running SnakeGame
 
 This guide will walk you through the steps to compile and run a SnakeGame program using CMake.
 
-## Prerequisites
+### Prerequisites
 
 Before you begin, make sure you have the following installed on your system:
 
+- SDL Library
 - CMake
 - C++ compiler (e.g., GCC or Clang)
 
-## Compilation Steps
+### Compilation Steps
 
 1. Open your terminal or command prompt.
 
