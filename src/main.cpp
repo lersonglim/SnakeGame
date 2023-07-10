@@ -9,7 +9,7 @@
 const int WINDOW_WIDTH = 600;
 const int WINDOW_HEIGHT = 500;
 const int PIXEL_SIZE = 20;
-const float SNAKE_SPEED = 12;
+const float SNAKE_SPEED = 15;
 const int MIN_X = 0;
 const int MIN_Y = 0;
 const int MAX_X = WINDOW_WIDTH / PIXEL_SIZE - 1; // without -1 this will be the edge of the window
