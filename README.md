@@ -48,3 +48,7 @@ The make command will compile the source code and generate the executable.
    ```
 
 This command executes the compiled program.
+
+### Future Plan
+
+Add AI agent to play SnakeGame
