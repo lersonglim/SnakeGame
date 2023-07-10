@@ -1,6 +1,6 @@
 # C++ Program Compilation Guide
 
-This guide will walk you through the steps to compile and run a C++ program using CMake.
+This guide will walk you through the steps to compile and run a SnakeGame program using CMake.
 
 ## Prerequisites
 
@@ -35,22 +35,7 @@ The make command will compile the source code and generate the executable.
 5. Finally, run the program:
 
    ```shell
-   ./bin/program
+   ./bin/SnakeGame
    ```
 
 This command executes the compiled program.
-
-Congratulations! You have successfully compiled and run the C++ program using CMake.
-
-## Troubleshooting
-
-- If you encounter any errors during the compilation process, make sure you have installed the required dependencies and that the project's `CMakeLists.txt` file is correctly configured.
-
-- If the program fails to run, ensure that the compiled executable is located in the correct directory, as specified in the last step.
-
-## Additional Resources
-
-For more information on using CMake and building C++ projects, refer to the following resources:
-
-- [CMake Documentation](https://cmake.org/documentation/)
-- [C++ Reference](http://www.cplusplus.com/doc/)
