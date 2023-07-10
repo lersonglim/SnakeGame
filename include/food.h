@@ -16,4 +16,6 @@ public:
     Food(int minX, int minY, int maxX, int maxY, int snake_size);
 
     void regenerate();
+
+    std::tuple<int, int> get_food_position();
 };

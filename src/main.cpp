@@ -151,7 +151,11 @@ int main(int argc, char *argv[])
 
             score_text->render();
             DrawSnake(renderer, *snake);
+
             DrawFood(renderer, *food);
+
+            // print(snake->get_node_positions());
+            print(food->get_food_position());
 
             // Delay for a short time
             SDL_RenderPresent(renderer);

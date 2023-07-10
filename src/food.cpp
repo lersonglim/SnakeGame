@@ -7,7 +7,6 @@ void Food::regenerate()
 {
     x = GenerateRandomNumber(m_minX, m_maxX);
     y = GenerateRandomNumber(m_minY, m_maxY);
-    std::cout << "Food position: x " << x << " y " << y << std::endl;
 }
 
 Food::Food(int minX, int minY, int maxX, int maxY, int snake_size)
@@ -19,4 +18,9 @@ Food::Food(int minX, int minY, int maxX, int maxY, int snake_size)
     m_snake_size = snake_size;
 
     regenerate();
+}
+
+std::tuple<int, int> Food::get_food_position()
+{
+    return std::make_tuple(x, y);
 }

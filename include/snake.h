@@ -39,9 +39,9 @@ public:
 
     void setDirection(SDL_Keycode keySymbol);
 
-    
-
     Node getNextPosition();
+
+    std::vector<std::tuple<int, int>> get_node_positions();
 
     void move();
 };

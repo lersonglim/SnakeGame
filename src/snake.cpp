@@ -162,3 +162,15 @@ void Snake::move()
     head->y = posNode.y;
     head->x = posNode.x;
 }
+
+std::vector<std::tuple<int, int>> Snake::get_node_positions()
+{
+    std::vector<std::tuple<int, int>> tupleVector;
+    Node *ptr = head;
+    while (ptr != nullptr)
+    {
+        tupleVector.push_back(std::make_tuple(ptr->x, ptr->y));
+        ptr = ptr->next;
+    }
+    return tupleVector;
+}
