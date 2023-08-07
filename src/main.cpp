@@ -154,9 +154,6 @@ int main(int argc, char *argv[])
 
             DrawFood(renderer, *food);
 
-            // print(snake->get_node_positions());
-            print(food->get_food_position());
-
             // Delay for a short time
             SDL_RenderPresent(renderer);
             SDL_Delay(DELAY_TIME);

@@ -1,0 +1,11 @@
+[requires]
+sdl/[~2.26]
+sdl_ttf/[~2.0]
+tensorflow-lite/2.10.0
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
