@@ -6,6 +6,12 @@ It is a vanilla c++ snake game program. Please see below GIF for example:
 
 ![Alt Text](https://github.com/lersonglim/SnakeGame/blob/main/assets/SnakeGame.gif)
 
+Update: 2023/08/09
+
+Added real-time streaming of C++ snake game state using websocket to python backend server. These streaming data can be used to train AI agent to play the game.
+
+![Alt Text](https://github.com/lersonglim/SnakeGame/blob/main/assets/RealTime.gif)
+
 ## Guide to compile and running SnakeGame
 
 This guide will walk you through the steps to compile and run a SnakeGame program using CMake.
