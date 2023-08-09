@@ -5,6 +5,18 @@
 #include "draw.h"
 #include "collision.h"
 #include "text.h"
+#include <nlohmann/json.hpp>
+
+// Boost Libraries
+#include <boost/beast/core.hpp>
+#include <boost/beast/websocket.hpp>
+#include <boost/asio/connect.hpp>
+#include <boost/asio/ip/tcp.hpp>
+
+namespace beast = boost::beast;
+namespace websocket = beast::websocket;
+namespace net = boost::asio;
+using tcp = net::ip::tcp;
 
 const int WINDOW_WIDTH = 600;
 const int WINDOW_HEIGHT = 500;
@@ -23,6 +35,48 @@ enum GameState
     MainMenu = 0,
     Play = 1,
 };
+
+class State
+{
+public:
+    std::vector<std::tuple<int, int>> snake_position;
+    std::tuple<int, int> food_position;
+    Direction snake_direction;
+    GameState game_state;
+    int score;
+
+    // Constructor
+    State(std::vector<std::tuple<int, int>> s_pos, std::tuple<int, int> f_pos, Direction s_dir, GameState g_state, int s) : snake_position(s_pos), food_position(f_pos), snake_direction(s_dir), game_state(g_state), score(s) {}
+
+    nlohmann::json json()
+    {
+        nlohmann::json jsonState;
+        jsonState["snake_position"] = snake_position;
+        jsonState["food_position"] = food_position;
+        jsonState["snake_direction"] = static_cast<int>(snake_direction);
+        jsonState["game_state"] = static_cast<int>(game_state);
+        jsonState["score"] = static_cast<int>(score);
+
+        return jsonState;
+    };
+};
+
+std::shared_ptr<websocket::stream<tcp::socket>>
+create_websocket_connection(std::string host, std::string port)
+{
+    net::io_context ioc;
+    tcp::resolver resolver{ioc};
+    std::shared_ptr<websocket::stream<tcp::socket>> ws = std::make_shared<websocket::stream<tcp::socket>>(ioc);
+
+    auto const results = resolver.resolve(host, port);
+    auto ep = net::connect(ws->next_layer(), results);
+
+    host += ':' + std::to_string(ep.port());
+
+    ws->handshake(host, "/websocket");
+
+    return ws;
+}
 
 int main(int argc, char *argv[])
 {
@@ -55,6 +109,7 @@ int main(int argc, char *argv[])
     GameState gamestate = MainMenu;
     SDL_Event event;
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    auto ws = create_websocket_connection("localhost", "8888");
 
     while (!quit)
     {
@@ -129,7 +184,6 @@ int main(int argc, char *argv[])
             // Clear the renderer
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             SDL_RenderClear(renderer);
-
             // MAX_X +1 and MAX_Y + 1 because that's the edge. MAX_X is the last pixel
             if (DetectWallCollision(*snake, MIN_X, MAX_X + 1, MIN_Y, MAX_Y + 1) || DetectSnakeCollision(*snake))
             {
@@ -156,6 +210,15 @@ int main(int argc, char *argv[])
 
             // Delay for a short time
             SDL_RenderPresent(renderer);
+
+            // update state and websocket send state
+            {
+                State state(snake->get_node_positions(), food->get_food_position(), snake->getDirection(), gamestate, score);
+                std::string jsonString = state.json().dump(4); // Use pretty printing with an indentation of 4 spaces
+                std::cout << jsonString << std::endl;
+                ws->write(net::buffer(jsonString));
+            }
+
             SDL_Delay(DELAY_TIME);
             break;
         case GameOver:
@@ -173,6 +236,7 @@ int main(int argc, char *argv[])
         }
     }
     // Cleanup and quit SDL
+    ws->close(websocket::close_code::normal);
     TTF_Quit();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

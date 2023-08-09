@@ -1,7 +1,8 @@
 [requires]
 sdl/[~2.26]
 sdl_ttf/[~2.0]
-tensorflow-lite/2.10.0
+boost/1.82.0
+nlohmann_json/3.10.5
 
 [generators]
 CMakeDeps
